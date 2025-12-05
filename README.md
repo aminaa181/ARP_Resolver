@@ -31,5 +31,6 @@ Rezultati razmjene pohranjuju se u ARP cache, pa se isti upit ne mora ponavljati
 
 ## Literatura
 [1] CCNA 200-301 Official Cert Guide, Volume 1, Chapter 3: Fundamentals of WANs and IP Routing 77,78
+
 [2] Avalon Interface Specification, Intel Quartus Prime Design Suite 20.1, v2022.01.24
 
