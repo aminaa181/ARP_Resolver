@@ -39,7 +39,7 @@ Na slici 3 prikazan je treći scenario koji testira ponašanje modula kada se po
 
 <div align="center">
   <img src="Graficki_prikaz_scenarija/scenario3.png" alt="Scenario3" title="Scenario3">
-  <p><b>Slika 1:</b> Grafički prikaz višestrukih zahtjeva</p>
+  <p><b>Slika 3:</b> Grafički prikaz višestrukih zahtjeva</p>
 </div>
 
 Ovaj scenario pokazuje kako se sistem ponaša u slučaju paralelnih zahtjeva i osigurava da se rezolucije obrađuju sekvencijalno, bez konflikata i bez gubitka podataka. Koristeći ovajscenario testirana je robusnost FSM a i potvrđuje da modul pravilno upravlja stanjem zauzetosti.
