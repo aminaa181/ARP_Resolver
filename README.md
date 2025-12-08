@@ -48,7 +48,7 @@ Na slici 3 prikazan je treći scenario koji testira ponašanje modula kada se po
   <p><b>Slika 3:</b> Grafički prikaz višestrukih zahtjeva</p>
 </div>
 
-Razlika u ovom scenariju u odnosu na prethodna dva scenarija oslikava se kada tokom obrade prvog zahtjeva pojavi novi 'resolve' signal. Pošto je modul već zauzet ('busy'='1'), drugi zahtjev se ne šalje u mrežu. Modul ne može paralelno obrađivati više rezolucija, pa se novi zahtjev ili ignoriše ili stavlja u internu čekalicu, ali u svakom slučaju ne ide prema izlaznom interfejsu dok prvi proces nije završen. Tek kada se prvi zahtjev kompletira i signal 'done' bude aktiviran ('1'), modul se vraća u stanje spremnosti i može prihvatiti novi 'resolve'.
+Razlika u ovom scenariju u odnosu na prethodna dva scenarija oslikava se kada tokom obrade prvog zahtjeva pojavi novi `resolve` signal. Pošto je modul već zauzet (`busy='1'`), drugi zahtjev se ne šalje u mrežu. Modul ne može paralelno obrađivati više rezolucija, pa se novi zahtjev ili ignoriše ili stavlja u internu čekalicu, ali u svakom slučaju ne ide prema izlaznom interfejsu dok prvi proces nije završen. Tek kada se prvi zahtjev kompletira i signal `done` bude aktiviran (`'1'`), modul se vraća u stanje spremnosti i može prihvatiti novi `resolve`.
 
 Ovaj scenario pokazuje kako se sistem ponaša u slučaju paralelnih zahtjeva i osigurava da se rezolucije obrađuju sekvencijalno, bez konflikata i bez gubitka podataka. Koristeći ovajscenario testirana je robusnost FSM-a i potvrđuje da modul pravilno upravlja stanjem zauzetosti.
 
