@@ -50,7 +50,7 @@ Na slici 3 prikazan je treći scenario koji testira ponašanje modula kada se po
 
 Razlika u ovom scenariju u odnosu na prethodna dva scenarija oslikava se kada tokom obrade prvog zahtjeva pojavi novi `resolve` signal. Pošto je modul već zauzet (`busy='1'`), drugi zahtjev se ne šalje u mrežu. Modul ne može paralelno obrađivati više rezolucija, pa se novi zahtjev ili ignoriše ili stavlja u internu čekalicu, ali u svakom slučaju ne ide prema izlaznom interfejsu dok prvi proces nije završen. Tek kada se prvi zahtjev kompletira i signal `done` bude aktiviran (`'1'`), modul se vraća u stanje spremnosti i može prihvatiti novi `resolve`.
 
-Ovaj scenario pokazuje kako se sistem ponaša u slučaju paralelnih zahtjeva i osigurava da se rezolucije obrađuju sekvencijalno, bez konflikata i bez gubitka podataka. Koristeći ovajscenario testirana je robusnost FSM-a i potvrđuje da modul pravilno upravlja stanjem zauzetosti.
+Ovaj scenario pokazuje kako se sistem ponaša u slučaju paralelnih zahtjeva i osigurava da se rezolucije obrađuju sekvencijalno, bez konflikata i bez gubitka podataka. Koristeći ovaj scenario testirana je robusnost FSM-a i potvrđuje da modul pravilno upravlja stanjem zauzetosti.
 
 
 ## Opis ulaznih i izlaznih signala modula
@@ -90,8 +90,58 @@ U ovom dijelu predstavljena su stanja FSM-a (*engl. Finite State Machine*) model
 - **RESOLUTION_FAIL** – Ako odgovor nije primljen u predviđenom vremenu ili je nevalidan, modul prelazi u stanje neuspješne rezolucije. Signal `done` se i dalje aktivira na jedan takt, ali `mac_address` ostaje na logičkoj 0 (nepromijenjena). Nakon toga, modul se vraća u stanje `IDLE`, spreman za novi zahtjev.
 - **MULTIPLE_REQUESTS** - Ukoliko se signal `resolve` pojavi dok je modul već zauzet (`busy = '1'`), prelazi se u stanje višestrukih zahtjeva. U ovom stanju modul može ignorisati dodatne zahtjeve, staviti ih u red čekanja ili ih obraditi sekvencijalno, u zavisnosti od implementacije. Nakon obrade, vraća se u stanje IDLE.
 
+Detaljniji opis FSM dijagrama (mac_address tretiran kao vektor zasada, izmijenit ćemo u skladu sa odgovorom na naša pitanja):
+ 
+1. IDLE (Stanje mirovanja)
+Ovo je početno stanje u kojem se modul nalazi nakon reset signala ili nakon završene rezolucije. Modul je pasivan i spreman za prihvatanje novog zahtjeva.
+busy = '0': Modul nije zauzet i može prihvatiti novi zahtjev za rezoluciju.
+done = '0': Nema završenog procesa u ovom taktu.
+resolve (ulaz): FSM prati ovaj signal. Dok je '0', ostaje se u stanju IDLE. Kada je resolve = '1' u stanju IDLE, vrijednost sa ulaza ip_address se pohranjuje u interni registar, a FSM prelazi u stanje SEND_REQUEST.
+Avalon-ST RX (in_ready): Postavljen na '0'. U stanju mirovanja modul ne očekuje i ne obrađuje dolazne pakete.
+Avalon-ST TX (out_valid): Postavljen na '0'. Nema prenosa podataka.
 
+2. SEND_REQUEST (Slanje ARP zahtjeva)
+U ovo stanje se prelazi odmah nakon aktivacije signala resolve. Cilj stanja je generisanje i slanje ARP Request paketa putem Avalon-ST TX interfejsa.
+busy = '1': Označava da je rezolucija u toku. Novi zahtjevi na resolve ulazu se u ovom stanju ignorišu.
+done = '0': Proces još nije završen.
+Avalon-ST TX interfejs (out_data, out_valid, out_sop, out_eop):
+Generiše se niz bajtova koji formiraju ispravan Ethernet/ARP okvir (Broadcast MAC, ARP Request opcode, Target IP).
+out_valid = '1': Signal je aktivan sve dok se podaci šalju.
+out_sop = '1': Aktivira se samo uz prvi bajt paketa.
+out_eop = '1': Aktivira se samo uz posljednji bajt paketa.
+Tranzicija na naredni bajt se dešava samo ako je i out_ready postavljen na '1'.
+Prelaz: Nakon uspješnog slanja posljednjeg bajta (out_eop='1' i out_ready='1'), FSM prelazi u stanje WAIT_REPLY.
 
+3. WAIT_REPLY (Čekanje odgovora)
+Nakon slanja zahtjeva, modul prelazi u stanje osluškivanja mreže. Ovdje se čeka ARP Reply koji sadrži traženu MAC adresu.
+busy = '1': Modul je i dalje zauzet.
+Avalon-ST TX: Slanje je završeno, out_valid se postavlja na '0'.
+Avalon-ST RX (in_ready): Postavlja se na '1'. Modul signalizira spremnost da primi podatke od mrežnog kontrolera.
+Logika prijema:
+Kada su in_valid i in_ready aktivni, modul analizira dolazne bajtove (in_data).
+Provjerava se: Da li je EtherType = ARP? Da li je Opcode = Reply? Da li se Sender IP poklapa sa traženom ip_address?
+Timeout Timer: U ovom stanju aktivan je interni brojač. Ako brojač dostigne definisani limit prije prijema validnog odgovora, prelazi se u stanje RESOLUTION_FAIL.
+Prelaz: Ako se detektuje validan ARP Reply, prelazi se u stanje RESOLUTION_SUCCESS.
+
+4. RESOLUTION_SUCCESS (Uspješna rezolucija)
+Modul je primio validan odgovor i ekstraktovao MAC adresu pošiljaoca.
+mac_address (izlaz): Na izlaz se postavlja validna 48-bitna MAC adresa dobijena iz ARP Reply paketa.
+done = '1': Generiše se impuls u trajanju od jednog takta koji signalizira validnost izlaznih podataka.
+busy = '0' (ili prelazi u 0 u narednom taktu): Označava kraj operacije.
+Interfejsi: in_ready se spušta na '0', out_valid ostaje '0'.
+Prelaz: Nakon jednog takta, FSM se vraća u stanje IDLE.
+
+5. RESOLUTION_FAIL (Neuspješna rezolucija / Timeout)
+Ukoliko tajmer istekne (timeout) prije prijema validnog odgovora, nastupa ovo stanje.
+mac_address (izlaz): Izlaz ostaje nevalidan (npr. sve nule ili prethodna vrijednost, zavisno od implementacije), jer odgovor nije dobijen.
+done = '1': Generiše se impuls koji označava završetak pokušaja, ali gornji sloj aplikacije mora znati da (uz nevalidnu adresu) ovo znači neuspjeh.
+busy = '0': Oslobađa se modul za nove pokušaje.
+Prelaz: Nakon jednog takta, FSM se vraća u stanje IDLE.
+
+6. MULTIPLE_REQUESTS (Višestruki zahtjevi)
+Ovo stanje pokriva scenario kada se signal resolve ponovno aktivira dok je modul u stanjima SEND_REQUEST ili WAIT_REPLY.
+Ponašanje: S obzirom da je busy = '1', modul ignoriše novi zahtjev kako bi očuvao integritet trenutne transakcije.
+Prelaz: Modul ostaje u trenutnom stanju (npr. WAIT_REPLY) sve dok se tekuća rezolucija ne završi signalom done. Tek povratkom u IDLE moguće je obraditi novi zahtjev.
 
 
 
