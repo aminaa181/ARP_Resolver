@@ -1,14 +1,14 @@
 # ARP Resolver
 
 ## Uvod
-U savremenim mrežama komunikacija između uređaja zasniva se na složenom skupu protokola koji omogućavaju pouzdanu razmjenu podataka. Jedan od ključnih protokola u okviru mrežnog sloja je ARP (*engl. Address Resolution Protocol*), čija je osnovna funkcija povezivanje logičkih IP adresa sa fizičkim MAC adresama. Bez ovog mehanizma, uređaji unutar lokalne mreže ne bi mogli efikasno komunicirati, jer bi nedostajala veza između apstraktnog adresiranja i stvarne hardverske identifikacije. ARP se koristi u gotovo svim Ethernet okruženjima i predstavlja temeljnu komponentu mrežne infrastrukture.
+U savremenim mrežama, komunikacija između uređaja zasniva se na složenom skupu protokola koji omogućavaju pouzdanu razmjenu podataka. Jedan od osnovnih protokola u okviru mrežnog sloja je ARP (*engl. Address Resolution Protocol*), čija je osnovna funkcija povezivanje logičkih IP adresa sa fizičkim MAC adresama. Bez ovog mehanizma, uređaji unutar lokalne mreže ne bi mogli efikasno komunicirati, jer bi nedostajala veza između apstraktnog adresiranja i stvarne hardverske identifikacije. ARP se koristi u gotovo svim Ethernet okruženjima i predstavlja temeljnu komponentu mrežne infrastrukture [1].
 
 ## ARP protokol i scenariji razmjene poruka
-U Ethernet mrežama svaki put kada host ili ruter treba enkapsulirati IP paket u okvir, poznata je IP adresa sljedećeg uređaja, ali ne i njegova MAC adresa. Da bi se uspostavila komunikacija, koristi se ARP, koji omogućava dinamičko povezivanje IP adrese sa odgovarajućom MAC adresom.
+U Ethernet mrežama svaki put kada host ili ruter treba enkapsulirati IP paket u okvir, poznata je IP adresa sljedećeg uređaja, ali ne i njegova MAC adresa. Da bi se uspostavila komunikacija, koristi se ARP, koji omogućava dinamičko povezivanje IP adrese sa odgovarajućom MAC adresom [1].
 
-Protokol se zasniva na razmjeni dvije osnovne poruke:
-  - ARP Request – broadcast upit kojim uređaj traži MAC adresu za poznatu IP adresu.  
-  - ARP Reply – odgovor koji sadrži IP adresu i pripadajuću MAC adresu, čime se omogućava nastavak komunikacije [1] .   
+Prema Odomu [2], ARP protokol se temelji na razmjeni dvije osnovne poruke:
+  - ARP Request – poruka kojom jedan host na istoj podatkovnoj vezi traži informaciju o hardverskoj adresi drugog hosta. U poruci se obično navodi poznata ciljna IP adresa, dok je polje za ciljnu hardversku adresu postavljeno na nule. Time se od hosta s navedenom IP adresom traži da u svom ARP Reply odgovoru otkrije vlastitu hardversku (Ethernet) adresu.  
+  - ARP Reply – poruka kojom uređaj odgovara na prethodno primljeni ARP zahtjev. U njoj se nalaze podaci o hardverskoj (Ethernet) adresi i IP adresi samog pošiljatelja, zapisani u poljima za izvorni hardver i izvornu IP adresu.   
 
 U nastavku su prikazani osnovni scenariji rada ARP resolvera. Njihova svrha je da se kroz grafičke prikaze i objašnjenja prikaže način na koji se modul ponaša u različitim situacijama, od uobičajenih do onih složenijih. Time se dobija jasna slika o pouzdanosti i pravilnom funkcionisanju sistema u mrežnoj komunikaciji.
 
@@ -25,7 +25,7 @@ Ovaj scenario je bitan jer pokazuje osnovnu funkcionalnost ARP protokola: kako s
 
 ### Scenario 2 - Neuspješna rezolucija 
 
-Slika 2 prikazuje scenario u kojem se opisuje šta se dešava kada se traži IP adresa koja ne postoji u mreži. HOST1 šalje ARP Request kao broadcast, pitajući “Ko ima IP adresu 192.168.10.10?”. Poruka se prenosi kroz LAN i svi hostovi je primaju, ali nijedan od njih nema tu adresu. Zbog toga nema odgovora, nema ARP Reply poruke. HOST1 ostaje u stanju čekanja određeno vrijeme, dok signal _busy_ pokazuje da je rezolucija u toku. Kada istekne vrijeme čekanja, modul generiše signal _done_, ali MAC adresa ostaje nevalidna. 
+Slika 2 prikazuje scenario u kojem se opisuje šta se dešava kada se traži IP adresa koja ne postoji u mreži. HOST1 šalje ARP Request kao broadcast, pitajući “Ko ima IP adresu 192.168.10.10?”. Poruka se prenosi kroz LAN i svi hostovi je primaju, ali nijedan od njih nema tu adresu. Zbog toga nema odgovora, nema ARP Reply poruke. HOST1 ostaje u stanju čekanja određeno vrijeme, dok signal `busy` pokazuje da je rezolucija u toku. Kada istekne vrijeme čekanja, modul generiše signal `done`, ali MAC adresa ostaje nevalidna. 
 
 <div align="center">
   <img src="Graficki_prikaz_scenarija/scenario2.png" alt="Scenario2" title="Scenario2">
@@ -35,7 +35,7 @@ Slika 2 prikazuje scenario u kojem se opisuje šta se dešava kada se traži IP 
 Ovaj scenario je važan jer pokazuje kako sistem reaguje na nepostojeće adrese: umjesto da se beskonačno čeka, uvodi se mehanizam timeout-a koji osigurava da se proces završi i da se zna da rezolucija nije uspjela. To je ključno za stabilnost mreže i za sprječavanje blokiranja komunikacije.
 
 ### Scenario 3 - Višestruki zahtjevi
-Na slici 3 prikazan je treći scenario koji testira ponašanje modula kada se pojavi novi zahtjev dok je prethodni još u toku. HOST1 šalje prvi ARP Request za IP adresu 192.168.10.4, a HOST4 odgovara sa ARP Reply i daje svoju MAC adresu. Dok je modul zauzet obradom tog zahtjeva (_busy_=1), pojavi se novi _resolve_ signal, koji je označen kao ARP Request 2. Taj drugi zahtjev se ne šalje u mrežu jer modul ne može paralelno obrađivati više rezolucija. On se ili ignoriše ili stavlja u red čekanja, ali u svakom slučaju ne ide prema switchu dok prvi proces nije završen. Tek kada se prvi zahtjev završi (_done_=1), modul može prihvatiti novi zahtjev. 
+Na slici 3 prikazan je treći scenario koji testira ponašanje modula kada se pojavi novi zahtjev dok je prethodni još u toku. HOST1 šalje prvi ARP Request za IP adresu 192.168.10.4, a HOST4 odgovara sa ARP Reply i daje svoju MAC adresu. Dok je modul zauzet obradom tog zahtjeva (`busy`=1), pojavi se novi `resolve` signal, koji je označen kao ARP Request 2. Taj drugi zahtjev se ne šalje u mrežu jer modul ne može paralelno obrađivati više rezolucija. On se ili ignoriše ili stavlja u red čekanja, ali u svakom slučaju ne ide prema switchu dok prvi proces nije završen. Tek kada se prvi zahtjev završi (`done`=1), modul može prihvatiti novi zahtjev. 
 
 <div align="center">
   <img src="Graficki_prikaz_scenarija/scenario3.png" alt="Scenario3" title="Scenario3">
@@ -84,7 +84,9 @@ U nastavku su prikazani signali entiteta `arp_resolver` zajedno sa njihovim tipo
 
 
 ## Literatura
-[1] CCNA 200-301 Official Cert Guide, Volume 1, Chapter 3: Fundamentals of WANs and IP Routing 77,78
+[1] W. Odom, CCNA 200-301 Official Cert Guide, Volume 1, Cisco Press, sve. 1, izd. 1, str. 77-78, 2020.
 
-[2] Avalon Interface Specification, Intel Quartus Prime Design Suite 20.1, v2022.01.24
+[2] W. Odom, CCNA 200-301 Official Cert Guide, Volume 2, Cisco Press, sve. 2, izd. 1, str. 496, 2020.
+
+[3] Avalon Interface Specification, Intel Quartus Prime Design Suite 20.1, v2022.01.24
 
