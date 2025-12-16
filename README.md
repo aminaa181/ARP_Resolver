@@ -33,16 +33,18 @@ Prilikom razmjene ARP Request i ARP Reply poruka, polja poput HTYPE, PTYPE, HLEN
 
 U ARP Requestu popunjena su polja sa hardverskom i protokolskom adresom pošiljaoca (SHA i SPA), dok je polje ciljne hardverske adrese (THA) prazno ili ignorisano (najčesće se pišu nule u to polje), a ciljana protokolska adresa (TPA) sadrži IP adresu uređaja čija se MAC adresa traži. Također, OPER polje ima vrijednost 1.
 
-U ARP Replyu, uređaj koji odgovara prvo upoređuje vrijednost SPA iz zahtjeva sa vlastitom IP adresom. Ako se podudara, generiše odgovor. U tom odgovoru, SHA i SPA polja se popunjavaju njegovom vlastitom MAC i IP adresom, dok se vrijednosti koje su došle od Resolvera (inicijatora zahtjeva) smještaju u THA i TPA. Polje OPER tada dobije vrijednost 2. Na taj način se originalnom pošiljaocu vraća tražena veza između ciljne IP adrese i odgovarajuće MAC adrese. Ako se IP adresa ne podudara, uređaj jednostavno ignoriše zahtjev i ne šalje ARP Reply. Prethodno opisano predstavljeno je sekvencijskim dijagramima na slici 2 i slici 3.
+U ARP Replyu, uređaj koji odgovara prvo upoređuje vrijednost SPA iz zahtjeva sa vlastitom IP adresom. Ako se podudara, generiše odgovor. U tom odgovoru, SHA i SPA polja se popunjavaju njegovom vlastitom MAC i IP adresom, dok se vrijednosti koje su došle od Resolvera (inicijatora zahtjeva) smještaju u THA i TPA. Polje OPER tada dobije vrijednost 2. Na taj način se originalnom pošiljaocu vraća tražena veza između ciljne IP adrese i odgovarajuće MAC adrese (slika 2). 
 
 <div align="center">
   <img src="Graficki_prikaz/Graficki_prikaz_scenario1.png" alt="Scenario1" title="Scenario1">
   <p><b>Slika 2:</b> Grafički prikaz uspješne rezolucije</p>
 </div>
 
+Drugi scenario predstavlja obacivanje ARP Reply-a zbog nočekivanog sadržaja. Bilo koje od prethodno definisanih polja u ARP paketu može biti različito od očekivanog, zvog čega će Resolver odbaciti taj isti paket. Na slici 3 prikazan je opisani scenarij. 
+
 <div align="center">
-  <img src="Graficki_prikaz/Graficki_prikaz_scenario2.png" alt="Scenario2" title="Scenario2">
-  <p><b>Slika 3:</b> Grafički prikaz neuspješne rezolucije</p>
+  <img src="Graficki_prikaz/Graficki_prikaz_sscen2.png" alt="Scenario2" title="Scenario2">
+  <p><b>Slika 3:</b> Grafički prikaz odbacivanja paketa</p>
 </div>
 
 
