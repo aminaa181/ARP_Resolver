@@ -132,7 +132,7 @@ Ovakvo ponašanje sistema ilustrira situaciju u kojoj ciljni uređaj nije dostup
 
 <div align="center">
   <img src="Wavedrom/wavedrom_s2.png" alt="Scenario2" title="Scenario2">
-  <p><b>Slika 5:</b> Wavedrom za neuspješnu rezoluciju </p>
+  <p><b>Slika 6:</b> Wavedrom za neuspješnu rezoluciju </p>
 </div>
 
 
