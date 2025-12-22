@@ -47,17 +47,21 @@ U prvom scenariju prikazan je standardni tok ARP komunikacije. Proces započinje
 Sekvencijski dijagram u ovom scenariju prikazuje razmjenu između Resolvera i ciljnog uređaja. Resolver šalje ARP Request u kojem navodi vlastite adrese i traženu IP adresu, dok responder, prepoznavši da se vrijednost u TPA polju podudara s njegovom IP adresom, generiše ARP Reply i vraća ga direktno Resolveru. On upoređuje traženu adresu sa vlastitom i, ukoliko postoji podudaranje, generiše ARP Reply. U odgovoru se polja SHA i SPA popunjavaju njegovim vlastitim MAC i IP podacima, dok se vrijednosti inicijatora zahtjeva smještaju u THA i TPA. Na Ethernet nivou, okvir se šalje unicastom – odredišna adresa postaje MAC adresa Resolvera. Sekvencijski dijagram jasno pokazuje tok: zahtjev ide prema Responderu, a odgovor se vraća direktno pošiljaocu. Rezultat je uspješna rezolucija, gdje Resolver dobija traženu MAC adresu i može nastaviti enkapsulaciju IP paketa.
 
 
-
-
-
-
+<div align="center">
+  <img src="Graficki_prikaz/Graficki_prikaz_scenario1.png" alt="Scenario1" title="Scenario1">
+  <p><b>Slika 3:</b> Sekvencijski dijagram za scenario uspješne rezolucije </p>
+</div>
 
 
 ### Scenarij 2 – Odbacivanje paketa
 Drugi scenarij prikazuje situaciju u kojoj Resolver prima ARP Reply, ali ga odbacuje zbog nepravilnog sadržaja. Iako okvir na Ethernet nivou može biti formalno ispravan (ima odredišnu i izvornu adresu, tip i CRC), sadržaj ARP dijela ne odgovara očekivanim vrijednostima. To se može desiti ako TPA ne odgovara traženoj IP adresi, ako SHA sadrži pogrešnu MAC adresu, ili ako polje OPER ne nosi validnu vrijednost za odgovor.
 
-Sekvencijski dijagram u ovom scenariju prikazuje kako Resolver prima okvir, ali nakon provjere polja zaključuje da sadržaj nije konzistentan sa prethodno poslanim zahtjevom. Umjesto da ažurira svoju ARP tabelu, on odbacuje paket. Ovaj tok naglašava da ARP nije samo mehanizam za razmjenu adresa, već i proces koji uključuje validaciju podataka. Na taj način se sprječava pogrešno mapiranje IP adrese na neispravnu MAC adresu, čime se osigurava pouzdanost komunikacije.
+Sekvencijski dijagram u ovom scenariju prikazuje kako Resolver prima okvir, ali nakon provjere polja zaključuje da sadržaj nije konzistentan sa prethodno poslanim zahtjevom. Konkretno, u predstavljenom primjeru, polje OPER zathijeva da dobije vrijednost 2, ali umjesto toga dobija vrijednost 3. Umjesto da ažurira svoju ARP tabelu, on odbacuje paket. Ovaj tok naglašava da ARP nije samo mehanizam za razmjenu adresa, već i proces koji uključuje validaciju podataka. Na taj način se sprječava pogrešno mapiranje IP adrese na neispravnu MAC adresu, čime se osigurava pouzdanost komunikacije.
 
+<div align="center">
+  <img src="Graficki_prikaz/Graficki_prikaz_scenario2.png" alt="Scenario2" title="Scenario2">
+  <p><b>Slika 3:</b> Sekvencijski dijagram za scenario neuspješne rezolucije </p>
+</div>
 
 
 
