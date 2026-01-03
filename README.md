@@ -185,3 +185,5 @@ Sinhronizacija između stanja ostvarena je isključivo pomoću signala `clock`, 
 
 [5] Avalon Interface Specification, Intel Quartus Prime Design Suite 20.1, v2022.01.24
 
+[6] "Finite-state machine" (bez dat.). u Wikipedia, the Free Encyclopedia. Dostupno: https://en.wikipedia.org/wiki/Finite-state_machine [pristupano 03.01.2026.]
+
