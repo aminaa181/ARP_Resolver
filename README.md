@@ -137,29 +137,32 @@ Zbog toga modul ne izvlači MAC adresu, signal `mac_address` ostaje nepromijenje
 
 ## Dizajn konačnog automata – FSM dijagram
 
-Rješenje modula **ARP_Resolver** implementirano je kao deterministički konačni automat (*engl. Finite State Machine – FSM*) koji upravlja cjelokupnim tokom prevođenja logičke IP adrese u fizičku MAC adresu. Dizajn je dominantno zasnovan na Mooreovom modelu, pri čemu izlazni signali u najvećoj mjeri zavise od trenutnog stanja automata, dok su tranzicije između stanja uslovljene ulaznim signalima. Ovakav hibridni Moore/Mealy pristup predstavlja uobičajeno rješenje u sinhronim mrežnim modulima i osigurava stabilan i deterministički rad sklopa. Na slici 7 prikazan je FSM dijagram sa svim relevantnim stanjima, prijelazima i kontrolnim signalima.
+Konačni automat (*engl. Finite State Machine – FSM*) je matematički model koji opisuje ponašanje sistema kroz konačan broj stanja, gdje se sistem u svakom trenutku nalazi u tačno jednom stanju. Prelazi između tih stanja definišu se skupom ulaznih uslova, a svaka promjena stanja predstavlja reakciju sistema na spoljašnje signale. FSM se koristi za modeliranje sekvencijalne logike u digitalnim sklopovima, softverskim kontrolerima i komunikacijskim protokolima, jer omogućava precizno upravljanje tokom izvršavanja i determinističko ponašanje sistema [6].
+
+
+Modul ARP_Resolver strukturiran je kao deterministički FSM koji upravlja procesom razmjene ARP okvira u mrežnom podsistemu. FSM je organizovan kroz jasno definisana stanja i prijelaze, čime se modelira cjelokupan tok obrade: od inicijalnog mirovanja, preko slanja zahtjeva, čekanja odgovora i prijema okvira, pa sve do završetka ili odbacivanja nevalidnih podataka. Na priloženom dijagramu na slici 7 prikazana su sva relevantna stanja (IDLE, SENDING REQUEST, WAITING FOR REPLY, RECEIVING REPLY, DISCARDING FRAME, DONE) i prijelazi koji određuju dinamiku rada modula. Ovakva organizacija omogućava da se svaki ARP zahtjev i odgovor obradi u kontrolisanom slijedu, uz jasnu separaciju faza i predvidiv povratak sistema u početno stanje nakon završetka procesa.
 
 <div align="center">
-  <img src="FSM/fsm.drawio.png" alt="FSM dijagram" title="FSM dijagram ARP Resolvera">
+  <img src="FSM/fsm.png" alt="FSM dijagram" title="FSM dijagram ARP Resolvera">
   <p><b>Slika 7:</b> FSM dijagram stanja ARP Resolvera</p>
 </div>
 
-### Opis stanja automata
 
-- **Idle** – Početno stanje u kojem modul miruje i ne učestvuje u mrežnoj komunikaciji. Svi izlazni kontrolni signali su neaktivni (`busy = '0'`, `done = '0'`), a interni brojač vremena je resetovan. Proces prevođenja adrese započinje impulsom na signalu `resolve`, nakon čega automat prelazi u stanje slanja zahtjeva.
-- **Send ARP Request** – U ovom stanju modul generiše i šalje ARP Request poruku u obliku toka bajtova (*engl. byte-stream*). Prijenos podataka realizovan je putem **Avalon-ST** interfejsa, gdje se bajtovi pojavljuju na magistrali `out_data` samo kada su signali `out_valid` i `out_ready` istovremeno aktivni. Automat ostaje u ovom stanju sve dok se ne pošalje kompletan ARP okvir, što se signalizira aktivacijom `out_eop` na posljednjem bajtu.
-- **Wait_Reply** – Nakon slanja zahtjeva, modul prelazi u stanje čekanja odgovora. U ovom stanju aktivan je interni brojač `cnt_timer`, koji implementira *timeout* mehanizam. Postoje dva moguća ishoda:
-    - **Detekcija dolaznog paketa** – Ukoliko se detektuje početak novog paketa (`in_valid = '1'` i `in_sop = '1'`), automat prelazi u stanje provjere sadržaja.
-    - **Istek vremena (timeout)** – Ako brojač dostigne vrijednost `MAX_TIMEOUT`, automat prelazi direktno u stanje **Done**, čime se spriječava trajno blokiranje modula u slučaju izostanka ARP odgovora.
-- **Check Frame** – U ovom stanju se tokom prijema okvira sekvencijalno analiziraju relevantna ARP polja. Provjerava se tip operacije (`OPER == 2`, što označava ARP Reply) kao i izvorna IP adresa (`SPA == ip_address`). Ukoliko su svi uslovi ispunjeni, fizička adresa pošiljaoca (`SHA`) se pohranjuje u privremeni registar. U suprotnom, paket se smatra nevažećim.
-- **Drop Frame** – Ako se tokom provjere utvrdi da prispjeli paket nije validan ARP Reply ili nije namijenjen ovom uređaju, automat prelazi u stanje odbacivanja. Modul nastavlja prihvatati dolazne bajtove sve do detekcije signala `in_eop`, čime se neispravan okvir u potpunosti uklanja iz komunikacijskog toka, nakon čega se automat vraća u stanje **Wait_Reply**.
-- **Done** – Završno stanje u kojem se generiše izlazni impuls `done = '1'` u trajanju od jednog takta, čime se nadređenom sistemu signalizira završetak procesa prevođenja. Izlaz `mac_address` se ažurira samo u slučaju uspješnog ishoda (`Frame_OK = '1'`). Nakon toga, automat se automatski vraća u početno stanje **Idle**, spreman za novi zahtjev.
+**IDLE** predstavlja početnu i završnu tačku rada automata, u kojoj modul miruje i ne obrađuje okvire. FSM ostaje u ovom stanju sve dok ne primi zahtjev za rješavanje ARP upita, što se signalizira aktivacijom ulaznog signala `resolve`. Istovremeno, modul provjerava spremnost interface-a putem ulaznog signala `out_ready`. Tek kada su oba uslova ispunjena, automata napušta stanje mirovanja i prelazi u fazu slanja zahtjeva (SENDING REQUEST). 
 
-### Tok protokola i kontrolna logika
+**SENDING REQUEST** označava fazu u kojoj modul aktivno generiše i šalje ARP zahtjev prema mrežnom interface-u Dok se nalazi u ovom stanju, modul kontinuirano šalje okvir sve dok zahtjev ostaje aktivan (`resolve = 1`). Kada se završi slanje i interfejs više nije spreman (`out_ready = 0`), FSM napušta ovo stanje i prelazi u WAITING FOR REPLY. Na taj način, SENDING REQUEST obuhvata cijelu fazu formiranja ARP zahtjeva, osiguravajući da se okvir u potpunosti prenese prije nego što sistem pređe u narednu fazu čekanja odgovora.
 
-Uvođenje stanja **Drop Frame** značajno povećava robusnost sistema, jer omogućava ignorisanje irelevantnog ili *broadcast* saobraćaja bez prekidanja procesa. 
+**WAITING FOR REPLY** označava fazu u kojoj modul, nakon što je poslao ARP zahtjev, prelazi u pasivno čekanje odgovora.  Prelaz u naredno stanje nastaje tek kada se pojavi početak dolaznog okvira, što se signalizira kombinacijom `in_sop = 1` i `in_valid = 1`. Na taj način FSM osigurava da prijem ne započne prerano, već isključivo kada okvir zaista stigne. 
 
-Sinhronizacija između stanja ostvarena je isključivo pomoću signala `clock`, dok asinhroni signal `reset` omogućava trenutni povratak automata u bezbjedno početno stanje. Kontrola toka podataka (*engl. backpressure*) realizovana je signalima `in_ready` i `out_ready`, čime se garantuje da neće doći do gubitka podataka u situacijama kada prijemnik ili predajnik privremeno nisu spremni za rad.
+**RECEIVING REPLY** predstavlja fazu u kojoj modul aktivno prihvata dolazni ARP odgovor. Dok okvir traje, FSM ostaje u ovom stanju sve dok se ne detektuje kraj (`in_eop = 0` uz `in_valid = 1`), čime se osigurava da se svi podaci uredno prime. Kada se pojavi završetak okvira (`in_eop = 1`), sistem provjerava da li je obrada uspješno završena. Ako je izlazni signal `done = 1`, prelazi se u završno stanje DONE, dok u slučaju `done = 0` automata ide u DISCARDING FRAME.
+
+**DISCARDING FRAME** predstavlja fazu u kojoj modul kontrolisano odbacuje okvir koji je primljen, ali nije validan ili nije uspješno obrađen. Tokom ove faze okvir se zanemaruje, bez daljnje obrade ili upisa rezultata. FSM ostaje u stanju odbacivanja sve dok se modul ne oslobodi zauzetosti, što se signalizira kroz `busy = 0`. Nakon toga sistem se vraća u početno stanje IDLE, spreman da prihvati novi zahtjev. 
+
+**DONE** označava fazu rada automata u kojoj se potvrđuje da je prijem i obrada ARP odgovora uspješno završena. U ovom trenutku modul signalizira završetak obrade kroz izlazni signal done, čime se jasno označava da je rezultat spreman za daljnju upotrebu. FSM ostaje u stanju DONE dok se modul ne oslobodi zauzetosti, što se reflektuje kroz ulazni uslov `busy = 0`. Nakon toga sistem se vraća u početno stanje IDLE, spreman da prihvati novi zahtjev.
+
+
+
+
 
 
 ## Modeliranje sklopa u VHDL-u i sinteza u Intel Quartus Prime
