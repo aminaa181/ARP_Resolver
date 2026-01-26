@@ -178,6 +178,23 @@ Modul ARP_Resolver strukturiran je kao deterministički FSM koji upravlja proces
 
 ## Modeliranje sklopa u VHDL-u i sinteza u Intel Quartus Prime
 
+
+U okviru ovog rada implementiran je ARP Resolver modul, razvijen i testiran korištenjem Quartus Prime Lite Edition alata, uz simulaciju u ModelSim-u. Za komunikaciju su korišteni Avalon interfejsi, čime je osigurana kompatibilnost sa standardnim FPGA okruženjem. Na slici 8 prikazana je kompilacija dizajna (*engl. compilation report*) generisan u Quartusu, koji potvrđuje uspješnu sintezu i kompilaciju dizajna.
+
+<div align="center">
+  <img src="Results/compilation_report.png" alt="compilation_report" title="compilation_report">
+  <p><b>Slika 8:</b> Prikaz compilation report-a) </p>
+</div>
+
+FSM je dobijen direktno iz glavnog koda i ponaša se u skladu sa opisanim modelom iz prethodnog poglavlja, potvrđujući konzistentnost između teorijskog opisa i praktične realizacije. FSM je dobijen korištenjem opcija Tools → Netlist Viewers → State Machine Viewer, te je prikazan na slici 9.
+
+<div align="center">
+  <img src="Results/ARP_Resolver_fsm_quaartus.png" alt="ARP_Resolver_fsm_quaartus" title="ARP_Resolver_fsm_quaartus">
+  <p><b>Slika 8:</b> Prikaz FSM dijagrama korištenjem Quartus Prime Lite Edition alata) </p>
+</div>
+
+
+
 ## Testno okruženje i verifikacija u ModelSim-u
 
 ## Zaključak 
