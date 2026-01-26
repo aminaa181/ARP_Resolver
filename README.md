@@ -183,14 +183,14 @@ U okviru ovog rada implementiran je ARP Resolver modul, razvijen i testiran kori
 
 <div align="center">
   <img src="Results/compilation_report.png" alt="compilation_report" title="compilation_report">
-  <p><b>Slika 8:</b> Prikaz compilation report-a) </p>
+  <p><b>Slika 8:</b> Prikaz compilation report-a </p>
 </div>
 
 FSM je dobijen direktno iz glavnog koda i ponaša se u skladu sa opisanim modelom iz prethodnog poglavlja, potvrđujući konzistentnost između teorijskog opisa i praktične realizacije. FSM je dobijen korištenjem opcija Tools → Netlist Viewers → State Machine Viewer, te je prikazan na slici 9.
 
 <div align="center">
   <img src="Results/ARP_Resolver_fsm_quaartus.png" alt="ARP_Resolver_fsm_quaartus" title="ARP_Resolver_fsm_quaartus">
-  <p><b>Slika 8:</b> Prikaz FSM dijagrama korištenjem Quartus Prime Lite Edition alata) </p>
+  <p><b>Slika 9:</b> Prikaz FSM dijagrama korištenjem Quartus Prime Lite Edition alata) </p>
 </div>
 
 
