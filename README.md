@@ -190,7 +190,7 @@ FSM je dobijen direktno iz glavnog koda i ponaša se u skladu sa opisanim modelo
 
 <div align="center">
   <img src="Results/ARP_Resolver_fsm_quaartus.png" alt="ARP_Resolver_fsm_quaartus" title="ARP_Resolver_fsm_quaartus">
-  <p><b>Slika 9:</b> Prikaz FSM dijagrama korištenjem Quartus Prime Lite Edition alata) </p>
+  <p><b>Slika 9:</b> Prikaz FSM dijagrama korištenjem Quartus Prime Lite Edition alata </p>
 </div>
 
 
