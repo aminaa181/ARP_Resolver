@@ -213,7 +213,7 @@ Također, modul bi se mogao proširiti dodavanjem mehanizama za timeout i ponavl
 
 Osim toga, budući rad može obuhvatiti integraciju ARP Resolver modula u širi mrežni podsistem na FPGA platformi, zajedno sa IPv4, ICMP ili UDP/TCP modulima, čime bi se omogućila izgradnja kompletnih mrežnih stack rješenja u hardveru.
 
-Na kraju, dodatna optimizacija dizajna u pogledu resursne potrošnje i brzine obrade mogla bi omogućiti implementaciju na složenijim i bržim mrežnim interfejsima, uključujući Gigabit Ethernet i naprednije FPGA sisteme.
+Na kraju, dodatna optimizacija dizajna u pogledu resursne potrošnje i brzine obrade mogla bi omogućiti implementaciju na složenijim i bržim mrežnim interfejsima, uključujući GB Ethernet i naprednije FPGA sisteme.
 
 
 ## Literatura
