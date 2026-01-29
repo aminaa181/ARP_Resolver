@@ -197,6 +197,14 @@ FSM je dobijen direktno iz glavnog koda i ponaša se u skladu sa opisanim modelo
 
 ### Scenarij 1 – Uspješna rezolucija
 
+<div align="center">
+  <img src="Results/modelsim_transcript_scenario1.png" alt="modelsim_transcript_scenario1" title="modelsim_transcript_scenario1">
+  <p><b>Slika 10:</b> Prikaz transcript-a iz ModelSim alata </p>
+</div>
+
+
+
+
 ### Scenarij 2 – Neuspješna rezolucija
 
 ## Zaključak 
