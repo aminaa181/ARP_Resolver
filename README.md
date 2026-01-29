@@ -197,9 +197,22 @@ FSM je dobijen direktno iz glavnog koda i ponaša se u skladu sa opisanim modelo
 
 ### Scenarij 1 – Uspješna rezolucija
 
+
 <div align="center">
   <img src="Results/modelsim_transcript_scenario1.png" alt="modelsim_transcript_scenario1" title="modelsim_transcript_scenario1">
-  <p><b>Slika 10:</b> Prikaz transcript-a iz ModelSim alata </p>
+  <p><b>Slika 10:</b> PPrikaz transcript-a iz ModelSim alata </p>
+</div>
+
+
+<div align="center">
+  <img src="Results/modelsim_wavedrom_scenario1-1.png" alt="modelsim_wavedrom_scenario1-1" title="modelsim_wavedrom_scenario1-1">
+  <p><b>Slika 11:</b> Prikaz simuliranih signala (0ns-460ns) </p>
+</div>
+
+
+<div align="center">
+  <img src="Results/modelsim_wavedrom_scenario1-2.png" alt="modelsim_wavedrom_scenario1-1" title="modelsim_wavedrom_scenario1-1">
+  <p><b>Slika 12:</b> Prikaz simuliranih signala (450ns-950ns) </p>
 </div>
 
 
