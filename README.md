@@ -195,6 +195,10 @@ FSM je dobijen direktno iz glavnog koda i ponaša se u skladu sa opisanim modelo
 
 ## Testno okruženje i verifikacija u ModelSim-u
 
+### Scenarij 1 – Uspješna rezolucija
+
+### Scenarij 2 – Neuspješna rezolucija
+
 ## Zaključak 
 U okviru ovog rada uspješno je analiziran i implementiran modul ARP Resolver, čija je osnovna funkcija omogućavanje rezolucije logičkih IPv4 adresa u odgovarajuće fizičke MAC adrese unutar lokalnih Ethernet mreža. ARP protokol predstavlja ključnu komponentu mrežnog sloja podatkovne veze, jer omogućava pravilnu enkapsulaciju IP paketa u Ethernet okvire i time osigurava pouzdanu komunikaciju između uređaja u istom segmentu mreže.
 
