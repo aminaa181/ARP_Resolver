@@ -43,7 +43,7 @@ ARP koristi vrlo jednostavnu strukturu poruke koja može da sadrži zahtjev ili 
 
 ### Scenarij 1 – Uspješna rezolucija 
 
-U lokalnim Ethernet mrežama, kada jedan uređaj želi poslati IP paket drugom uređaju, neophodno je da poznaje njegovu MAC adresu. Ukoliko ta informacija nije dostupna u lokalnoj ARP tabeli, pokreće se proces dinamičke rezolucije adrese putem ARP protokola. Prikazani scenario ilustrira upravo taj tok komunikacije između dva uređaja – ARP Resolvera i ARP Respondera – u kojem se uspješno ostvaruje povezivanje IP adrese sa odgovarajućom MAC adresom.
+U lokalnim Ethernet mrežama, kada jedan uređaj želi poslati IP paket drugom uređaju, neophodno je da poznaje njegovu MAC adresu. Prikazani scenario ilustrira tok komunikacije između dva uređaja – ARP Resolvera i ARP Respondera – u kojem se uspješno ostvaruje povezivanje IP adrese sa odgovarajućom MAC adresom.
 
 Proces započinje slanjem ARP Request poruke od strane Resolvera. Ova poruka se enkapsulira unutar Ethernet okvira, čije zaglavlje sadrži broadcast adresu (FF:FF:FF:FF:FF:FF) kao odredišnu, čime se osigurava da poruka stigne do svih uređaja u lokalnoj mreži. Izvorna adresa u zaglavlju je MAC adresa Resolvera, dok polje tipa (Type) nosi vrijednost 0x0806, što označava da se prenosi ARP poruka.
 
@@ -87,7 +87,7 @@ Signali koji se koriste tokom izrade zadanog modula, predstavljeni su u nastavku
 |-----------|---------------------|--------------|-----------------------------------------------------------------------------|
 | IN        | STD_LOGIC           | clock        | Clock signal koji pokreće sekvencijalnu logiku.                              |
 | IN        | STD_LOGIC           | reset        | Asinhroni reset, vraća modul u početno stanje.                              |
-| IN        | STD_LOGIC           | resolve      | Impuls kojim se inicira ARP rezolucija za zadati `ip_address`. |
+| IN        | STD_LOGIC           | resolve      | Impuls kojim se inicira ARP rezolucija za zadati `ip_address`.|
 | IN        | STD_LOGIC_VECTOR(31 downto 0) | ip_address   | IP adresa za koju se traži MAC adresa.                                      |
 | OUT       | STD_LOGIC           | done         | Impuls označava da je rezolucija završena i da je `mac_address` validan. |
 | OUT       | STD_LOGIC_VECTOR(47 downto 0) | mac_address  | Rezultat rezolucije – MAC adresa dobijena iz ARP Reply paketa.              |
@@ -134,8 +134,6 @@ Drugi prikazani scenarij u osnovi slijedi isti početni tok kao i prethodno opis
 
 Ključna razlika u odnosu na prvi scenarij nastupa nakon završetka slanja ARP zahtjeva i ulaska u fazu čekanja odgovora. Za razliku od prethodnog slučaja, u ovom scenariju dolazni ARP okvir koji se pojavljuje na ulazu ne predstavlja važeći odgovor na prethodno poslani zahtjev. Iako se na `in_data` i `in_valid` signalima pojavljuje strukturiran podatkovni tok koji na prvi pogled odgovara ARP poruci, njegov sadržaj ne zadovoljava kriterije potrebne za uspješnu rezoluciju tražene IP adrese. Kao posljedica toga, primljeni okvir se prepoznaje kao nerelevantan i biva zanemaren, bez izdvajanja MAC adrese i bez završetka postupka.
 
-Tokom ovog procesa modul zadržava aktivan status zauzetosti, čime se jasno pokazuje da prijem neodgovarajuće ARP poruke ne dovodi do prekida ili pogrešnog završetka procedure. Umjesto toga, sistem ostaje spreman da i dalje čeka ispravan ARP Reply koji odgovara inicijalno poslanom upitu. Upravo ovakav pristup osigurava robusnost ARP implementacije u realnim mrežnim uslovima, gdje se u istom trenutku može pojaviti veći broj ARP poruka koje nisu nužno povezane s konkretnim zahtjevom.
-
 Implementacija ovog scenarija ima za cilj demonstrirati sposobnost sistema da razlikuje relevantne i nerelevantne ARP odgovore, te da pravilno ignoriše poruke koje ne doprinose traženoj rezoluciji. Time se izbjegava mogućnost pogrešnog mapiranja IP i MAC adresa, ali i potencijalni sigurnosni i funkcionalni problemi. U poređenju s prvim scenarijem, koji prikazuje idealan slučaj uspješne razmjene, ovaj scenarij naglašava ponašanje sistema u prisustvu „šuma“ u mreži i potvrđuje ispravnost implementacije u realističnim komunikacijskim okruženjima. Grafički prikaz opisanog scenarija predstavljen je na slici 6:
 
 <div align="center">
@@ -150,7 +148,7 @@ Implementacija ovog scenarija ima za cilj demonstrirati sposobnost sistema da ra
 Konačni automat (*engl. Finite State Machine – FSM*) je matematički model koji opisuje ponašanje sistema kroz konačan broj stanja, gdje se sistem u svakom trenutku nalazi u tačno jednom stanju. Prelazi između tih stanja definišu se skupom ulaznih uslova, a svaka promjena stanja predstavlja reakciju sistema na spoljašnje signale. FSM se koristi za modeliranje sekvencijalne logike u digitalnim sklopovima, softverskim kontrolerima i komunikacijskim protokolima, jer omogućava precizno upravljanje tokom izvršavanja i determinističko ponašanje sistema [6].
 
 
-Modul ARP_Resolver strukturiran je kao deterministički FSM koji upravlja procesom razmjene ARP okvira u mrežnom podsistemu. FSM je organizovan kroz jasno definisana stanja i prijelaze, čime se modelira cjelokupan tok obrade: od inicijalnog mirovanja, preko slanja zahtjeva, čekanja odgovora i prijema okvira, pa sve do završetka ili odbacivanja (ignorisanja) nevalidnih podataka. Na priloženom dijagramu na slici 7 prikazana su sva relevantna stanja (IDLE, ARP_REQUEST, WAITING_FOR_REPLY, RECEVING_REPLY, DONE i IGNORE) i prijelazi koji određuju dinamiku rada modula. Ovakva organizacija omogućava da se svaki ARP zahtjev i odgovor obradi u kontrolisanom slijedu, uz jasnu separaciju faza i predvidiv povratak sistema u početno stanje nakon završetka procesa.
+Modul ARP_Resolver strukturiran je kao deterministički FSM koji upravlja procesom razmjene ARP okvira u mrežnom podsistemu. FSM je organizovan kroz jasno definisana stanja i prijelaze, čime se modelira cjelokupan tok obrade: od inicijalnog mirovanja, preko slanja zahtjeva, čekanja odgovora i prijema okvira, pa sve do završetka ili odbacivanja (ignorisanja) nevalidnih podataka. Na priloženom dijagramu na slici 7 prikazana su sva relevantna stanja (IDLE, ARP_REQUEST, WAITING_FOR_REPLY, RECEVING_REPLY, DONE_STATE i IGNORE) i prijelazi koji određuju dinamiku rada modula. Ovakva organizacija omogućava da se svaki ARP zahtjev i odgovor obradi u kontrolisanom slijedu, uz jasnu separaciju faza i predvidiv povratak sistema u početno stanje nakon završetka procesa.
 
 <div align="center">
   <img src="FSM/fsm.png" alt="FSM dijagram" title="FSM dijagram ARP Resolvera">
@@ -164,9 +162,9 @@ Modul ARP_Resolver strukturiran je kao deterministički FSM koji upravlja proces
 
 **WAITING_FOR_REPLY** – Stanje WAITING_FOR_REPLY označava fazu u kojoj automat pasivno čeka dolazni ARP odgovor iz mreže. Tokom ovog perioda ne vrši se aktivna obrada podataka, već se nadgleda dolazni interface. Automat ostaje u ovom stanju sve dok ne budu istovremeno aktivni signali `in_sop = 1` i `in_valid = 1`, čime se detektuje početak dolaznog ARP okvira i započinje proces prijema odgovora.
 
-**RECEIVING_REPLY** – U stanju RECEIVING_REPLY automat aktivno prima i analizira dolaznu ARP Reply poruku. Tokom prijema bajtova provjerava se ispravnost sadržaja paketa i relevantnost odgovora u odnosu na prethodno poslani zahtjev. Automat ostaje u ovom stanju sve dok se ne ispuni jedan od dva uslova: ukoliko interni signal `error` postane aktivan, što ukazuje na neispravan ili nerelevantan paket, automat prelazi u stanje IGNORE; u slučaju da se detektuje uspješan završetak prijema, označen pojavom `in_sop = 1`, automat prelazi u stanje DONE, čime se potvrđuje uspješna ARP rezolucija.
+**RECEIVING_REPLY** – U stanju RECEIVING_REPLY automat aktivno prima i analizira dolaznu ARP Reply poruku. Tokom prijema bajtova provjerava se ispravnost sadržaja paketa i relevantnost odgovora u odnosu na prethodno poslani zahtjev. Automat ostaje u ovom stanju sve dok se ne ispuni jedan od dva uslova: ukoliko interni signal `error` postane aktivan, što ukazuje na neispravan ili nerelevantan paket, automat prelazi u stanje IGNORE; u slučaju da se detektuje uspješan završetak prijema, označen pojavom `in_sop = 1`, automat prelazi u stanje DONE_STATE, čime se potvrđuje uspješna ARP rezolucija.
 
-**DONE** – Stanje DONE signalizira da je postupak ARP rezolucije uspješno završen i da je tražena MAC adresa pronađena. U ovom stanju rezultat rezolucije postaje dostupan na izlazu, dok se aktivira signal koji označava završetak procesa. Automat ostaje u ovom stanju sve dok signal `done` ne postane neaktivan, nakon čega se vraća u stanje IDLE, spreman za novu operaciju.
+**DONE_STATE** – Stanje DONE_STATE signalizira da je postupak ARP rezolucije uspješno završen i da je tražena MAC adresa pronađena. U ovom stanju rezultat rezolucije postaje dostupan na izlazu, dok se aktivira signal koji označava završetak procesa. Automat ostaje u ovom stanju sve dok signal `done` ne postane neaktivan, nakon čega se vraća u stanje IDLE, spreman za novu operaciju.
 
 **IGNORE** – Stanje IGNORE služi za obradu situacija u kojima primljeni paketi ne predstavljaju važeći ARP odgovor na poslani zahtjev. U ovom stanju automat ignoriše dolazne bajtove sve dok traje prijem trenutnog okvira, bez pokušaja obrade ili izdvajanja adresnih informacija. Nakon završetka prijema neispravnog paketa, sistem se vraća u stanje IDLE, čime se omogućava pokretanje nove ARP rezolucije.
 
