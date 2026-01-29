@@ -196,9 +196,24 @@ FSM je dobijen direktno iz glavnog koda i ponaša se u skladu sa opisanim modelo
 ## Testno okruženje i verifikacija u ModelSim-u
 
 ## Zaključak 
+U okviru ovog rada uspješno je analiziran i implementiran modul ARP Resolver, čija je osnovna funkcija omogućavanje rezolucije logičkih IPv4 adresa u odgovarajuće fizičke MAC adrese unutar lokalnih Ethernet mreža. ARP protokol predstavlja ključnu komponentu mrežnog sloja podatkovne veze, jer omogućava pravilnu enkapsulaciju IP paketa u Ethernet okvire i time osigurava pouzdanu komunikaciju između uređaja u istom segmentu mreže.
+
+Teorijski dio rada obuhvatio je detaljan opis Ethernet okvira i strukture ARP poruke, uz objašnjenje funkcionalnosti svih relevantnih polja. Posebna pažnja posvećena je scenarijima razmjene ARP Request i ARP Reply poruka, gdje su prikazana dva tipična slučaja: uspješna rezolucija adrese i situacija u kojoj dolazi do odbacivanja nevalidnog odgovora. Time je naglašena važnost validacije sadržaja ARP poruka u realnim mrežnim uslovima.
+
+Praktični dio rada podrazumijevao je dizajn i implementaciju ARP Resolver modula u VHDL-u, korištenjem Avalon-ST interfejsa za prijenos podataka. Cjelokupan proces upravljan je determinističkim konačnim automatom (FSM), čija su stanja jasno definisana i potvrđena kroz grafičke prikaze i simulacije. Modul je uspješno sintetizovan u Intel Quartus Prime Lite Edition okruženju, dok je njegova funkcionalnost verifikovana u ModelSim-u kroz testne scenarije i waveform analize.
+
+Rezultati rada potvrđuju da implementirani sistem ispravno generiše ARP zahtjeve, prima i obrađuje validne odgovore, te pravilno ignoriše neispravne ARP pakete. Time je demonstrirana pouzdanost dizajna i njegova primjenjivost u FPGA-baziranim mrežnim sistemima.
 
 ### Smjernice za budući rad
+Iako implementirani ARP Resolver modul ispunjava osnovne funkcionalne zahtjeve i uspješno demonstrira proces ARP rezolucije, postoji više mogućnosti za njegovo proširenje i unapređenje u budućim istraživanjima.
 
+Jedan od pravaca daljeg razvoja jeste implementacija podrške za ARP tabelu (cache), čime bi se omogućilo memorisanje prethodno rezolviranih IP–MAC parova. Na taj način bi se smanjila potreba za ponovnim slanjem ARP zahtjeva i povećala efikasnost komunikacije u mreži.
+
+Također, modul bi se mogao proširiti dodavanjem mehanizama za timeout i ponavljanje zahtjeva, kako bi sistem mogao automatski reagovati u slučaju da odgovor ne stigne u predviđenom vremenskom intervalu. Ovo bi značajno povećalo robusnost dizajna u realnim mrežnim uslovima.
+
+Osim toga, budući rad može obuhvatiti integraciju ARP Resolver modula u širi mrežni podsistem na FPGA platformi, zajedno sa IPv4, ICMP ili UDP/TCP modulima, čime bi se omogućila izgradnja kompletnih mrežnih stack rješenja u hardveru.
+
+Na kraju, dodatna optimizacija dizajna u pogledu resursne potrošnje i brzine obrade mogla bi omogućiti implementaciju na složenijim i bržim mrežnim interfejsima, uključujući Gigabit Ethernet i naprednije FPGA sisteme.
 
 
 ## Literatura
