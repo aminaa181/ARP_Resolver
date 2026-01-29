@@ -220,6 +220,24 @@ FSM je dobijen direktno iz glavnog koda i ponaša se u skladu sa opisanim modelo
 
 ### Scenarij 2 – Neuspješna rezolucija
 
+
+<div align="center">
+  <img src="Results/modelsim_transcript_scenario2.png" alt="modelsim_transcript_scenario2" title="modelsim_transcript_scenario2">
+  <p><b>Slika 13:</b> Prikaz transcript-a iz ModelSim alata </p>
+</div>
+
+
+<div align="center">
+  <img src="Results/modelsim_wavedrom_scenario2-1.png" alt="modelsim_wavedrom_scenario2-1" title="modelsim_wavedrom_scenario2-1">
+  <p><b>Slika 14:</b> Prikaz simuliranih signala (0ns-460ns) </p>
+</div>
+
+
+<div align="center">
+  <img src="Results/modelsim_wavedrom_scenario2-2.png" alt="modelsim_wavedrom_scenario2-2" title="modelsim_wavedrom_scenario2-2">
+  <p><b>Slika 15:</b> Prikaz simuliranih signala (450ns-920ns) </p>
+</div>
+
 ## Zaključak 
 U okviru ovog rada uspješno je analiziran i implementiran modul ARP Resolver, čija je osnovna funkcija omogućavanje rezolucije logičkih IPv4 adresa u odgovarajuće fizičke MAC adrese unutar lokalnih Ethernet mreža. ARP protokol predstavlja ključnu komponentu mrežnog sloja podatkovne veze, jer omogućava pravilnu enkapsulaciju IP paketa u Ethernet okvire i time osigurava pouzdanu komunikaciju između uređaja u istom segmentu mreže.
 
