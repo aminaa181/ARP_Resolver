@@ -405,7 +405,7 @@ begin
                 when IGNORE =>
                     in_ready  <= '1';
                     out_valid <= '0';
-                    busy      <= '0';
+                    busy      <= '1';
                     error     <= '0';
                     mac_address <= (others => '0');
                    
@@ -413,6 +413,7 @@ begin
                         if in_eop = '1' then
                             current_state <= IDLE;
                             in_ready      <= '0';
+                            busy      <= '0';
                             byte_counter  <= (others => '0');
                         else
                             byte_counter <= byte_counter + 1;
@@ -445,3 +446,4 @@ begin
 	 error_internal <= error;
 
 end Behavioral;
+
