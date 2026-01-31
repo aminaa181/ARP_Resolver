@@ -207,9 +207,9 @@ Slika 10 prikazuje transkriptni prozor (*engl. transcript*) simulatora ModelSim,
   <p><b>Slika 10:</b> Prikaz transcript-a iz ModelSim alata </p>
 </div>
 
-Prvi testbench predstavlja scenarij uspješne ARP rezolucije. Nakon inicijalizacije i resetovanja modula, aktivira se signal resolve uz zadavanje ciljne IP adrese. Testbench zatim simulira slanje ARP odgovora u obliku kompletnog Ethernet/ARP paketa, pri čemu se bajtovi paketa sekvencijalno dovode na ulaz uz odgovarajuće in_valid, in_sop i in_eop signale. Tokom simulacije prati se stanje FSM-a, a po završetku prijema paketa provjerava se da li je signal done aktiviran, da li je ispravno izdvojena MAC adresa te da li se modul vraća u početno (IDLE) stanje bez grešaka.
+Prvi testbench predstavlja scenarij uspješne ARP rezolucije. Nakon inicijalizacije i resetovanja modula, aktivira se signal resolve uz zadavanje ciljne IP adrese. Testbench zatim simulira slanje ARP odgovora u obliku kompletnog Ethernet/ARP paketa, pri čemu se bajtovi paketa sekvencijalno dovode na ulaz uz odgovarajuće `in_valid`, `in_sop` i `in_eop signale`. Tokom simulacije prati se stanje FSM-a, a po završetku prijema paketa provjerava se da li je signal `done` aktiviran, da li je ispravno izdvojena MAC adresa te da li se modul vraća u početno (IDLE) stanje bez grešaka.
 
-Pomenuta stanja FSM-a nisu prikazana u tekstualnom obliku, već su predstavljena numeričkim vrijednostima radi lakšeg praćenja na vremenskom dijagramu. U skladu s tim, u simulaciji su korištene sljedeće oznake stanja: 1 – IDLE, 2 – ARP_REQUEST, 3 – WAITING_FOR_REPLY, 4 – RECEVING_REPLY, 5 – DONE_STATE i 6 – IGNORE. Ovakav način označavanja omogućava jednostavno praćenje prelaza između stanja i analizu ponašanja modula tokom razlicitih faza testnog scenarija.
+Pomenuta stanja FSM-a nisu prikazana u tekstualnom obliku, već su predstavljena numeričkim vrijednostima radi lakšeg praćenja na vremenskom dijagramu. U skladu s tim, u simulaciji su korištene sljedeće oznake stanja: 0 – IDLE, 1 – ARP_REQUEST, 2 – WAITING_FOR_REPLY, 3 – RECEVING_REPLY, 4 – DONE_STATE i 5 – IGNORE. Ovakav način označavanja omogućava jednostavno praćenje prelaza između stanja i analizu ponašanja modula tokom razlicitih faza testnog scenarija.
 
 Na slici 11 prikazan je vremenski dijagram signala simulacije u intervalu od 0 ns do 460 ns, koji obuhvata početnu fazu rada modula. U ovom periodu modul se inicijalno nalazi u IDLE stanju, nakon čega, aktivacijom signala resolve, prelazi u stanje ARP_REQUEST gdje generiše i šalje ARP zahtjev. Po završetku slanja zahtjeva jasno je vidljiv prelazak u stanje WAITING_FOR_REPLY, čime modul signalizira da očekuje dolazak ARP odgovora iz mreže.
 
@@ -233,11 +233,16 @@ Zajedničkom analizom prethodne dvije slike može se potvrditi da modul prolazi 
 
 ### Scenarij 2 – Neuspješna rezolucija
 
+Slika 13 prikazuje transkriptni prozor simulatora ModelSim, u kojem je zabilježen tok simulacije za drugi testni scenarij. U ovom prozoru vidljive su poruke o pokretanju simulacije, učitavanju dizajna i izvršavanju testbench-a, kao i informacije o promjenama stanja signala tokom rada modula. Transkriptni prozor u ovom slučaju potvrđuje da je simulacija izvršena bez tehničkih grešaka, ali da modul nije uspio ostvariti uspješnu ARP rezoluciju zbog nedostatka odgovora (zbog neispravno primljenog bajta).
 
 <div align="center">
   <img src="Results/modelsim_transcript_scenario2.png" alt="modelsim_transcript_scenario2" title="modelsim_transcript_scenario2">
   <p><b>Slika 13:</b> Prikaz transcript-a iz ModelSim alata </p>
 </div>
+
+Drugi testbench predstavlja scenarij u kojem modul prima ARP paket sa neispravnim poljem. Nakon inicijalizacije i resetovanja modula, aktivira se signal resolve uz zadavanje IP adrese. Modul zatim generiše i šalje ARP zahtjev, a u nastavku simulacije dolazi do prijema ARP odgovora. Međutim, umjesto očekivanog bajta 02 (koji označava ARP reply), u paketu se pojavljuje bajt 03. Ova nepravilnost uzrokuje da FSM prepozna paket kao neispravan i odmah pređe u stanje IGNORE.
+
+Na slici 14 prikazan je vremenski dijagram signala simulacije u intervalu od 0 ns do 460 ns, koji obuhvata početnu fazu rada modula. Modul se inicijalno nalazi u IDLE stanju, zatim aktivacijom signala resolve prelazi u stanje ARP_REQUEST i generiše ARP zahtjev. Nakon završetka slanja zahtjeva, modul prelazi u stanje WAITING_FOR_REPLY, gdje ostaje određeni vremenski period očekujući dolazak odgovora.
 
 
 <div align="center">
@@ -246,10 +251,17 @@ Zajedničkom analizom prethodne dvije slike može se potvrditi da modul prolazi 
 </div>
 
 
+Na slici 15 prikazan je nastavak simulacije u intervalu od 450 ns do 920 ns. Tokom ovog perioda modul ulazi u stanje RECEIVING_REPLY, ali zbog pojave neispravnog bajta 03 umjesto očekivanog 02, FSM odmah prelazi u stanje IGNORE. Modul ostaje u tom stanju sve dok se ne završi prijem paketa, nakon čega se vraća u početno IDLE stanje. Ovaj tok potvrđuje da je logika ispravno prepoznala grešku u sadržaju paketa i spriječila pogrešnu ARP rezoluciju. Signal done se u ovom scenariju ne aktivira, jer rezolucija nije uspješno završena.
+
 <div align="center">
   <img src="Results/modelsim_wavedrom_scenario2-2.png" alt="modelsim_wavedrom_scenario2-2" title="modelsim_wavedrom_scenario2-2">
   <p><b>Slika 15:</b> Prikaz simuliranih signala (450ns-920ns) </p>
 </div>
+
+Zajedničkom analizom prethodne dvije slike može se potvrditi da modul u slučaju prijema neispravnog ARP odgovora pravilno reaguje – prepoznaje grešku, prelazi u stanje IGNORE i vraća se u IDLE bez aktiviranja signala done. Prikazani vremenski dijagrami potvrđuju da implementirana logika korektno upravlja procesom u slučaju neispravnog paketa, čime se osigurava pouzdanost ARP rezolucije.
+
+
+
 
 ## Zaključak 
 U okviru ovog rada uspješno je analiziran i implementiran modul ARP Resolver, čija je osnovna funkcija omogućavanje rezolucije logičkih IPv4 adresa u odgovarajuće fizičke MAC adrese unutar lokalnih Ethernet mreža. ARP protokol predstavlja ključnu komponentu mrežnog sloja podatkovne veze, jer omogućava pravilnu enkapsulaciju IP paketa u Ethernet okvire i time osigurava pouzdanu komunikaciju između uređaja u istom segmentu mreže.
