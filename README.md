@@ -195,19 +195,31 @@ FSM je dobijen direktno iz glavnog koda i ponaša se u skladu sa opisanim modelo
 
 ## Testno okruženje i verifikacija u ModelSim-u
 
+U ovom dijelu projektnog zadatka izvršeno je testiranje i verifikacija logike modula razvijenog u razvojnom okruženju Quartus. Nakon implementacije hardverskog opisa, funkcionalnost dizajniranog koda provjerena je pomoću ModelSim simulatora, uz korištenje posebno pripremljenih testbench-a. Testbench-i su omogućili simulaciju rada sistema u različitim scenarijima, koji su prethodno detaljno opisani u prethodnim poglavljima.
+
+
 ### Scenarij 1 – Uspješna rezolucija
 
+Slika 10 prikazuje transkriptni prozor (*engl. transcript*) simulatora ModelSim, u kojem je vidljiv tok simulacije za prvi testni scenarij. U ovom prozoru zabilježene su poruke o uspješnom pokretanju simulacije, učitavanju dizajna i izvršavanju testbench-a, kao i eventualne informacije o promjenama stanja signala tokom simulacije. Transkriptni prozor služi kao dodatna potvrda da je simulacija korektno izvršena i da nije došlo do grešaka tokom testiranja.
 
 <div align="center">
   <img src="Results/modelsim_transcript_scenario1.png" alt="modelsim_transcript_scenario1" title="modelsim_transcript_scenario1">
   <p><b>Slika 10:</b> Prikaz transcript-a iz ModelSim alata </p>
 </div>
 
+Prvi testbench predstavlja scenarij uspješne ARP rezolucije. Nakon inicijalizacije i resetovanja modula, aktivira se signal resolve uz zadavanje ciljne IP adrese. Testbench zatim simulira slanje ARP odgovora u obliku kompletnog Ethernet/ARP paketa, pri čemu se bajtovi paketa sekvencijalno dovode na ulaz uz odgovarajuće in_valid, in_sop i in_eop signale. Tokom simulacije prati se stanje FSM-a, a po završetku prijema paketa provjerava se da li je signal done aktiviran, da li je ispravno izdvojena MAC adresa te da li se modul vraća u početno (IDLE) stanje bez grešaka.
+
+Pomenuta stanja FSM-a nisu prikazana u tekstualnom obliku, već su predstavljena numeričkim vrijednostima radi lakšeg praćenja na vremenskom dijagramu. U skladu s tim, u simulaciji su korištene sljedeće oznake stanja: 1 – IDLE, 2 – ARP_REQUEST, 3 – WAITING_FOR_REPLY, 4 – ARP_REPLY, 5 – DONE i 6 – IGNORE. Ovakav način označavanja omogućava jednostavno praćenje prelaza između stanja i analizu ponašanja modula tokom razlicitih faza testnog scenarija.
+
+Na slici 11 prikazan je vremenski dijagram signala simulacije u intervalu od 0 ns do 460 ns, koji obuhvata početnu fazu rada modula. U ovom periodu modul se inicijalno nalazi u IDLE stanju, nakon čega, aktivacijom signala resolve, prelazi u stanje ARP_REQUEST gdje generiše i šalje ARP zahtjev. Po završetku slanja zahtjeva jasno je vidljiv prelazak u stanje WAITING_FOR_REPLY, čime modul signalizira da očekuje dolazak ARP odgovora iz mreže.
+
 
 <div align="center">
   <img src="Results/modelsim_wavedrom_scenario1-1.png" alt="modelsim_wavedrom_scenario1-1" title="modelsim_wavedrom_scenario1-1">
   <p><b>Slika 11:</b> Prikaz simuliranih signala (0ns-460ns) </p>
 </div>
+
+Na slici 12 prikazan je nastavak simulacije u vremenskom intervalu od 450 ns do 950 ns, koji obuhvata završne faze prvog testnog scenarija. Tokom ovog perioda modul se nalazi u stanju WAITING_FOR_REPLY, zatim ulazi u stanje prijema ARP odgovora (ARP_REPLY), nakon čega se aktivira signal done kao potvrda uspješne rezolucije. Na kraju simulacije uočava se povratak modula u početno IDLE stanje, što ukazuje na ispravno završavanje procesa i spremnost za novu ARP rezoluciju.
 
 
 <div align="center">
@@ -216,6 +228,7 @@ FSM je dobijen direktno iz glavnog koda i ponaša se u skladu sa opisanim modelo
 </div>
 
 
+Zajedničkom analizom prethodne dvije slike može se potvrditi da modul prolazi kroz sva očekivana stanja u pravilnom redoslijedu. Prikazani vremenski dijagrami potvrđuju da implementirana logika korektno upravlja procesom ARP rezolucije, od inicijalizacije i slanja zahtjeva, preko čekanja i obrade odgovora, do završetka operacije i povratka u početno stanje.
 
 
 ### Scenarij 2 – Neuspješna rezolucija
