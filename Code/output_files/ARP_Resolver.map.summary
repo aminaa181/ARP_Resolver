@@ -1,0 +1,14 @@
+Analysis & Synthesis Status : Successful - Thu Jan 29 22:58:53 2026
+Quartus Prime Version : 20.1.0 Build 711 06/05/2020 SJ Lite Edition
+Revision Name : ARP_Resolver
+Top-level Entity Name : ARP_Resolver
+Family : Cyclone IV E
+Total logic elements : 351
+    Total combinational functions : 279
+    Dedicated logic registers : 158
+Total registers : 158
+Total pins : 113
+Total virtual pins : 0
+Total memory bits : 0
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0
