@@ -232,14 +232,11 @@ begin
             report "ERROR: Module did not return to IDLE state!" 
             severity error;
         
-        -- Simulation complete
-        report "=== Scenario 1 (Successful Resolution) Test Completed ===" 
-            severity note;
-        
-            
+   
         sim_done <= true;
         wait;
         
     end process;
+
 
 end Behavioral;
