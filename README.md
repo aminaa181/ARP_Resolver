@@ -55,7 +55,7 @@ U ARP dijelu odgovora, polje OPER dobija vrijednost 2, što označava odgovor. P
 
 Prikazani sekvencijski dijagram ilustrira tok: ARP Request se šalje kao broadcast, dok se ARP Reply vraća kao unicast. Iako dijagram prikazuje samo dva učesnika – Resolvera i Respondera – implicitno se podrazumijeva da broadcast poruka može biti primljena od strane svih uređaja u mreži, ali samo onaj čija IP adresa odgovara vrijednosti u TPA polju odgovara na zahtjev.
 
-Ovaj scenario, koji je prikazan na slici 3, predstavlja idealan tok ARP razmjene, bez grešaka u sadržaju poruke, što rezultira uspješnom rezolucijom adrese i ažuriranjem lokalne ARP tabele kod Resolvera.
+Ovaj scenario, koji je prikazan na slici 3, predstavlja idealan tok ARP razmjene, bez grešaka u sadržaju poruke, što rezultira uspješnom rezolucijom adrese.
 
 <div align="center">
   <img src="Graficki_prikaz/Graficki_prikaz_scenario1.png" alt="Scenario1" title="Scenario1">
