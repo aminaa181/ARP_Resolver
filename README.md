@@ -227,35 +227,49 @@ Na slici 12 prikazan je nastavak simulacije u vremenskom intervalu od 450 ns do 
   <p><b>Slika 12:</b> Prikaz simuliranih signala (450ns-950ns) </p>
 </div>
 
+Tok signala iz ModelSim simulacije nije vidljiv samo na vremenskom dijagramu, već je zahvaljujući ugrađenim assert provjerama prikazan i u transkript prozoru na slici 13. Na taj način se ponašanje modula može jasno pratiti kroz tekstualne bilješke o stanjima FSM-a, validaciji bajtova i eventualnim greškama tokom rezolucije.
+
+<div align="center">
+  <img src="Results/modelsim_transcript_scenario1_results.png" alt="modelsim_transcript_scenario1_results" title="modelsim_transcript_scenario1_results">
+  <p><b>Slika 13:</b> Prikaz transcript-a simulacije – scenarij uspješne ARP rezolucije </p>
+</div>
+
 
 Zajedničkom analizom prethodne dvije slike može se potvrditi da modul prolazi kroz sva očekivana stanja u pravilnom redoslijedu. Prikazani vremenski dijagrami potvrđuju da implementirana logika korektno upravlja procesom ARP rezolucije, od inicijalizacije i slanja zahtjeva, preko čekanja i obrade odgovora, do završetka operacije i povratka u početno stanje.
 
 
 ### Scenarij 2 – Neuspješna rezolucija
 
-Slika 13 prikazuje transkriptni prozor simulatora ModelSim, u kojem je zabilježen tok simulacije za drugi testni scenarij. U ovom prozoru vidljive su poruke o pokretanju simulacije, učitavanju dizajna i izvršavanju testbench-a, kao i informacije o promjenama stanja signala tokom rada modula. Transkriptni prozor u ovom slučaju potvrđuje da je simulacija izvršena bez tehničkih grešaka, ali da modul nije uspio ostvariti uspješnu ARP rezoluciju zbog nedostatka odgovora (zbog neispravno primljenog bajta).
+Slika 14 prikazuje transkriptni prozor simulatora ModelSim, u kojem je zabilježen tok simulacije za drugi testni scenarij. U ovom prozoru vidljive su poruke o pokretanju simulacije, učitavanju dizajna i izvršavanju testbench-a, kao i informacije o promjenama stanja signala tokom rada modula. Transkriptni prozor u ovom slučaju potvrđuje da je simulacija izvršena bez tehničkih grešaka, ali da modul nije uspio ostvariti uspješnu ARP rezoluciju zbog nedostatka odgovora (zbog neispravno primljenog bajta).
 
 <div align="center">
   <img src="Results/modelsim_transcript_scenario2.png" alt="modelsim_transcript_scenario2" title="modelsim_transcript_scenario2">
-  <p><b>Slika 13:</b> Prikaz transcript-a iz ModelSim alata </p>
+  <p><b>Slika 14:</b> Prikaz transcript-a iz ModelSim alata </p>
 </div>
 
 Drugi testbench predstavlja scenarij u kojem modul prima ARP paket sa neispravnim poljem. Nakon inicijalizacije i resetovanja modula, aktivira se signal resolve uz zadavanje IP adrese. Modul zatim generiše i šalje ARP zahtjev, a u nastavku simulacije dolazi do prijema ARP odgovora. Međutim, umjesto očekivanog bajta 02 (koji označava ARP reply), u paketu se pojavljuje bajt 03. Ova nepravilnost uzrokuje da FSM prepozna paket kao neispravan i odmah pređe u stanje IGNORE.
 
-Na slici 14 prikazan je vremenski dijagram signala simulacije u intervalu od 0 ns do 460 ns, koji obuhvata početnu fazu rada modula. Modul se inicijalno nalazi u IDLE stanju, zatim aktivacijom signala resolve prelazi u stanje ARP_REQUEST i generiše ARP zahtjev. Nakon završetka slanja zahtjeva, modul prelazi u stanje WAITING_FOR_REPLY, gdje ostaje određeni vremenski period očekujući dolazak odgovora.
+Na slici 15 prikazan je vremenski dijagram signala simulacije u intervalu od 0 ns do 460 ns, koji obuhvata početnu fazu rada modula. Modul se inicijalno nalazi u IDLE stanju, zatim aktivacijom signala resolve prelazi u stanje ARP_REQUEST i generiše ARP zahtjev. Nakon završetka slanja zahtjeva, modul prelazi u stanje WAITING_FOR_REPLY, gdje ostaje određeni vremenski period očekujući dolazak odgovora.
 
 
 <div align="center">
   <img src="Results/modelsim_wavedrom_scenario2-1.png" alt="modelsim_wavedrom_scenario2-1" title="modelsim_wavedrom_scenario2-1">
-  <p><b>Slika 14:</b> Prikaz simuliranih signala (0ns-460ns) </p>
+  <p><b>Slika 15:</b> Prikaz simuliranih signala (0ns-460ns) </p>
 </div>
 
 
-Na slici 15 prikazan je nastavak simulacije u intervalu od 450 ns do 920 ns. Tokom ovog perioda modul ulazi u stanje RECEIVING_REPLY, ali zbog pojave neispravnog bajta 03 umjesto očekivanog 02, FSM odmah prelazi u stanje IGNORE. Modul ostaje u tom stanju sve dok se ne završi prijem paketa, nakon čega se vraća u početno IDLE stanje. Ovaj tok potvrđuje da je logika ispravno prepoznala grešku u sadržaju paketa i spriječila pogrešnu ARP rezoluciju. Signal done se u ovom scenariju ne aktivira, jer rezolucija nije uspješno završena.
+Na slici 16 prikazan je nastavak simulacije u intervalu od 450 ns do 920 ns. Tokom ovog perioda modul ulazi u stanje RECEIVING_REPLY, ali zbog pojave neispravnog bajta 03 umjesto očekivanog 02, FSM odmah prelazi u stanje IGNORE. Modul ostaje u tom stanju sve dok se ne završi prijem paketa, nakon čega se vraća u početno IDLE stanje. Ovaj tok potvrđuje da je logika ispravno prepoznala grešku u sadržaju paketa i spriječila pogrešnu ARP rezoluciju. Signal done se u ovom scenariju ne aktivira, jer rezolucija nije uspješno završena.
 
 <div align="center">
   <img src="Results/modelsim_wavedrom_scenario2-2.png" alt="modelsim_wavedrom_scenario2-2" title="modelsim_wavedrom_scenario2-2">
-  <p><b>Slika 15:</b> Prikaz simuliranih signala (450ns-920ns) </p>
+  <p><b>Slika 16:</b> Prikaz simuliranih signala (450ns-920ns) </p>
+</div>
+
+Umjesto da se oslanja isključivo na vizuelni prikaz talasnog dijagrama, ponašanje modula tokom simulacije može se pratiti i kroz tekstualne poruke u transkript prozoru, prikazano na slici 17. Zahvaljujući ugrađenim provjerama u testbenchu, svaka promjena stanja FSM-a, kao i detekcija grešaka u paketu, bilježi se u obliku napomena i upozorenja. Na ovaj način transkript postaje dodatni alat za verifikaciju, jer omogućava analizu toka rezolucije kroz jasno dokumentovane događaje i reakcije modula. 
+
+<div align="center">
+  <img src="Results/modelsim_transcript_scenario2_results.png" alt="modelsim_transcript_scenario2_results" title="modelsim_transcript_scenario2_results">
+  <p><b>Slika 17:</b> Prikaz transcript-a simulacije – scenarij neuspješne ARP rezolucije </p>
 </div>
 
 Zajedničkom analizom prethodne dvije slike može se potvrditi da modul u slučaju prijema neispravnog ARP odgovora pravilno reaguje – prepoznaje grešku, prelazi u stanje IGNORE i vraća se u IDLE bez aktiviranja signala done. Prikazani vremenski dijagrami potvrđuju da implementirana logika korektno upravlja procesom u slučaju neispravnog paketa, čime se osigurava pouzdanost ARP rezolucije.
