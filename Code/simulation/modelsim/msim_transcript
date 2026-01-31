@@ -1,0 +1,163 @@
+# Reading pref.tcl
+# do ARP_Resolver_run_msim_rtl_vhdl.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Model Technology ModelSim - Intel FPGA Edition vmap 2020.1 Lib Mapping Utility 2020.02 Feb 28 2020
+# vmap work rtl_work 
+# Copying C:/Users/pc/OneDrive/Desktop/APCprogram/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vcom -93 -work work {C:/Users/pc/OneDrive/Desktop/APCprogram/PROJECT/ARP_Resolver.vhd}
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 22:59:48 on Jan 29,2026
+# vcom -reportprogress 300 -93 -work work C:/Users/pc/OneDrive/Desktop/APCprogram/PROJECT/ARP_Resolver.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity ARP_Resolver
+# -- Compiling architecture Behavioral of ARP_Resolver
+# End time: 22:59:49 on Jan 29,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# 
+vcom -reportprogress 300 -work work C:/Users/pc/OneDrive/Desktop/APCprogram/PROJECT/simulation/modelsim/ARP_Resolver_TB_Scenario1.vhdl
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 23:00:16 on Jan 29,2026
+# vcom -reportprogress 300 -work work C:/Users/pc/OneDrive/Desktop/APCprogram/PROJECT/simulation/modelsim/ARP_Resolver_TB_Scenario1.vhdl 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity ARP_Resolver_TB_Scenario1
+# -- Compiling architecture Behavioral of ARP_Resolver_TB_Scenario1
+# End time: 23:00:17 on Jan 29,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+vsim -gui -l msim_transcript work.arp_resolver_tb_scenario1
+# vsim -gui -l msim_transcript work.arp_resolver_tb_scenario1 
+# Start time: 23:00:29 on Jan 29,2026
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.arp_resolver_tb_scenario1(behavioral)
+# Loading work.arp_resolver(behavioral)
+add wave -position insertpoint  \
+sim:/arp_resolver_tb_scenario1/state \
+sim:/arp_resolver_tb_scenario1/resolve \
+sim:/arp_resolver_tb_scenario1/reset \
+sim:/arp_resolver_tb_scenario1/out_valid \
+sim:/arp_resolver_tb_scenario1/out_sop \
+sim:/arp_resolver_tb_scenario1/out_ready \
+sim:/arp_resolver_tb_scenario1/out_eop \
+sim:/arp_resolver_tb_scenario1/out_data \
+sim:/arp_resolver_tb_scenario1/mac_address \
+sim:/arp_resolver_tb_scenario1/ip_address \
+sim:/arp_resolver_tb_scenario1/in_valid \
+sim:/arp_resolver_tb_scenario1/in_sop \
+sim:/arp_resolver_tb_scenario1/in_ready \
+sim:/arp_resolver_tb_scenario1/in_eop \
+sim:/arp_resolver_tb_scenario1/in_data \
+sim:/arp_resolver_tb_scenario1/error_internal \
+sim:/arp_resolver_tb_scenario1/done \
+sim:/arp_resolver_tb_scenario1/clock \
+sim:/arp_resolver_tb_scenario1/busy
+run
+# ** Note: State: IDLE
+#    Time: 10 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1
+# ** Note: State: ARP_REQUEST
+#    Time: 30 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1
+# ** Note: State: WAITING_FOR_REPLY
+#    Time: 450 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1
+# ** Note: State: RECEIVING_REPLY
+#    Time: 500 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1
+# ** Note: Byte 22: MAC[47:40] = 140
+#    Time: 710 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1/uut
+# ** Note: Byte 23: MAC[39:32] = 236
+#    Time: 720 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1/uut
+# ** Note: Byte 24: MAC[31:24] = 43
+#    Time: 730 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1/uut
+# ** Note: Byte 25: MAC[23:16] = 177
+#    Time: 740 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1/uut
+# ** Note: Byte 26: MAC[15:8] = 13
+#    Time: 750 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1/uut
+# ** Note: Byte 27: MAC[7:0] = 58
+#    Time: 760 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1/uut
+# ** Note: Packet completed successfully - going to DONE_STATE
+#    Time: 900 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1/uut
+# ** Note: State: DONE_STATE
+#    Time: 910 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1
+# ** Error: ERROR: done signal not asserted!
+#    Time: 920 ns  Iteration: 0  Instance: /arp_resolver_tb_scenario1
+# ** Error: ERROR: MAC address mismatch!
+#    Time: 920 ns  Iteration: 0  Instance: /arp_resolver_tb_scenario1
+# ** Note: State: IDLE
+#    Time: 920 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario1
+# ** Note: === Scenario 1 (Successful Resolution) Test Completed ===
+#    Time: 950 ns  Iteration: 0  Instance: /arp_resolver_tb_scenario1
+vcom -reportprogress 300 -work work C:/Users/pc/OneDrive/Desktop/APCprogram/PROJECT/simulation/modelsim/ARP_Resolver_TB_Scenario2.vhdl
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 23:15:53 on Jan 29,2026
+# vcom -reportprogress 300 -work work C:/Users/pc/OneDrive/Desktop/APCprogram/PROJECT/simulation/modelsim/ARP_Resolver_TB_Scenario2.vhdl 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity ARP_Resolver_TB_Scenario2
+# -- Compiling architecture Behavioral of ARP_Resolver_TB_Scenario2
+# End time: 23:15:53 on Jan 29,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+vsim -gui -l msim_transcript work.arp_resolver_tb_scenario2
+# End time: 23:16:14 on Jan 29,2026, Elapsed time: 0:15:45
+# Errors: 2, Warnings: 0
+# vsim -gui -l msim_transcript work.arp_resolver_tb_scenario2 
+# Start time: 23:16:14 on Jan 29,2026
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.arp_resolver_tb_scenario2(behavioral)
+# Loading work.arp_resolver(behavioral)
+add wave -position insertpoint  \
+sim:/arp_resolver_tb_scenario2/state \
+sim:/arp_resolver_tb_scenario2/resolve \
+sim:/arp_resolver_tb_scenario2/reset \
+sim:/arp_resolver_tb_scenario2/out_valid \
+sim:/arp_resolver_tb_scenario2/out_sop \
+sim:/arp_resolver_tb_scenario2/out_ready \
+sim:/arp_resolver_tb_scenario2/out_eop \
+sim:/arp_resolver_tb_scenario2/out_data \
+sim:/arp_resolver_tb_scenario2/mac_address \
+sim:/arp_resolver_tb_scenario2/ip_address \
+sim:/arp_resolver_tb_scenario2/in_valid \
+sim:/arp_resolver_tb_scenario2/in_sop \
+sim:/arp_resolver_tb_scenario2/in_ready \
+sim:/arp_resolver_tb_scenario2/in_eop \
+sim:/arp_resolver_tb_scenario2/in_data \
+sim:/arp_resolver_tb_scenario2/error_internal \
+sim:/arp_resolver_tb_scenario2/done \
+sim:/arp_resolver_tb_scenario2/clock \
+sim:/arp_resolver_tb_scenario2/busy
+run
+# ** Note: State: IDLE
+#    Time: 10 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario2
+# ** Note: State: ARP_REQUEST
+#    Time: 30 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario2
+# ** Note: State: WAITING_FOR_REPLY
+#    Time: 450 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario2
+# ** Note: State: RECEIVING_REPLY
+#    Time: 500 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario2
+# ** Warning: Error at byte 21: OPER low (should be 0x02 for reply)
+#    Time: 700 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario2/uut
+# ** Note: State: IGNORE
+#    Time: 710 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario2
+# ** Note: State: IDLE
+#    Time: 910 ns  Iteration: 1  Instance: /arp_resolver_tb_scenario2
+# ** Error: ERROR: done signal not asserted!
+#    Time: 920 ns  Iteration: 0  Instance: /arp_resolver_tb_scenario2
+# ** Error: ERROR: MAC address mismatch!
+#    Time: 920 ns  Iteration: 0  Instance: /arp_resolver_tb_scenario2
+# ** Note: === Scenario 1 (Successful Resolution) Test Completed ===
+#    Time: 950 ns  Iteration: 0  Instance: /arp_resolver_tb_scenario2
